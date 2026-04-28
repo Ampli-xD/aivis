@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import { computePromptMetrics, getWeeklyBuckets } from '../lib/analytics_utils';
-    import type { Instance, Model, Prompt } from '../types';
+    import { computePromptMetrics, getWeeklyBuckets } from '../lib/analytics_utils.ts';
+    import type { Instance, Model, Prompt } from '../types.ts';
 
     interface Props {
         instances: Instance[];
@@ -12,7 +12,12 @@
 
     // --- Filters ---
     let selectedRange = $state<'7d' | '30d' | '90d' | 'all'>('30d');
-    let selectedModels = $state<string[]>(models.map(m => m.id));
+    let selectedModels = $state<string[]>([]);
+    $effect(() => {
+        if (selectedModels.length === 0 && models.length > 0) {
+            selectedModels = models.map(m => m.id);
+        }
+    });
 
     let searchQuery = $state('');
 

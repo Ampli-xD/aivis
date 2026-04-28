@@ -134,13 +134,14 @@
             </div>
 
             <div class="field">
-                <label>Brand</label>
-                <div class="brand-display">{getBrandName(appState.activeBrandId || '')}</div>
+                <label for="promptBrand">Brand</label>
+                <div id="promptBrand" class="brand-display">{getBrandName(appState.activeBrandId || '')}</div>
             </div>
 
             <div class="field">
-                <label>Content <span class="req">*</span></label>
+                <label for="promptContent">Content <span class="req">*</span></label>
                 <textarea
+                    id="promptContent"
                     bind:value={newContent}
                     placeholder="Enter your prompt content…"
                     rows="6"
@@ -149,8 +150,8 @@
             </div>
 
             <div class="field">
-                <label>Notes <span class="opt">(optional)</span></label>
-                <input type="text" bind:value={newNotes} placeholder="Internal notes about this prompt…">
+                <label for="promptNotes">Notes <span class="opt">(optional)</span></label>
+                <input id="promptNotes" type="text" bind:value={newNotes} placeholder="Internal notes about this prompt…">
             </div>
 
             <div class="modal-footer">
@@ -213,16 +214,16 @@
     .req { color: #f87171; }
     .opt { color: #3d3a52; font-weight: 400; text-transform: none; }
 
-    .field input, .field select, .field textarea {
+    .field input, .field textarea {
         background: #171522; border: 1px solid #2c293d;
         border-radius: 8px; padding: 10px 12px;
         color: #c8c3d8; font-family: inherit; font-size: 13px;
         outline: none; resize: vertical;
     }
-    .field input:focus, .field select:focus, .field textarea:focus {
+    .field input:focus, .field textarea:focus {
         border-color: #a47efd; box-shadow: 0 0 0 3px rgba(164,126,253,0.1);
     }
-    .field select option { background: #0f0e16; }
+
     .brand-display {
         background: #171522; border: 1px solid #2c293d;
         border-radius: 8px; padding: 10px 12px;

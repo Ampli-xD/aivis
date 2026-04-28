@@ -143,8 +143,8 @@
 <div class="analytics-container">
     <div class="filter-bar">
         <div class="filter-group">
-            <label>Deck</label>
-            <select bind:value={selectedDeckId}>
+            <label for="deckFilter">Deck</label>
+            <select id="deckFilter" bind:value={selectedDeckId}>
                 <option value="all">All Decks</option>
                 {#each brandDecks as d}
                     <option value={d.id}>{d.name}</option>
@@ -153,8 +153,8 @@
         </div>
 
         <div class="filter-group">
-            <label>Prompt</label>
-            <select bind:value={selectedPromptId}>
+            <label for="promptFilter">Prompt</label>
+            <select id="promptFilter" bind:value={selectedPromptId}>
                 <option value="all">All Prompts</option>
                 {#each brandPrompts as p}
                     <option value={p.id}>{p.content.substring(0, 30)}...</option>
@@ -163,8 +163,8 @@
         </div>
 
         <div class="filter-group">
-            <label>Model</label>
-            <select bind:value={selectedModelId}>
+            <label for="modelFilter">Model</label>
+            <select id="modelFilter" bind:value={selectedModelId}>
                 <option value="all">All Models</option>
                 {#each appState.models as m}
                     <option value={m.id}>{m.modelName}</option>
@@ -173,8 +173,8 @@
         </div>
 
         <div class="filter-group">
-            <label>Region</label>
-            <select bind:value={selectedRegionId}>
+            <label for="regionFilter">Region</label>
+            <select id="regionFilter" bind:value={selectedRegionId}>
                 <option value="all">All Regions</option>
                 {#each appState.regions as r}
                     <option value={r.id}>{r.name}</option>
@@ -183,13 +183,13 @@
         </div>
 
         <div class="filter-group">
-            <label>Start date</label>
-            <input type="date" bind:value={startDate} />
+            <label for="startDate">Start date</label>
+            <input id="startDate" type="date" bind:value={startDate} />
         </div>
 
         <div class="filter-group">
-            <label>End date</label>
-            <input type="date" bind:value={endDate} />
+            <label for="endDate">End date</label>
+            <input id="endDate" type="date" bind:value={endDate} />
         </div>
 
         <button class="run-btn" onclick={triggerAnalysis} disabled={isAnalyzing}>

@@ -162,7 +162,13 @@
                         </div>
                         <div class="brand-sub">{b.industry} • {b.domain}</div>
                     </div>
-                    <div class="brand-actions" onclick={(e) => e.stopPropagation()}>
+                    <div 
+                        class="brand-actions" 
+                        onclick={(e) => e.stopPropagation()}
+                        onkeydown={(e) => e.key === 'Enter' && e.stopPropagation()}
+                        role="button"
+                        tabindex="0"
+                    >
                         <button class="icon-btn" title="Edit" onclick={() => startEdit(b)}>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                         </button>
@@ -183,20 +189,20 @@
             <h3>{isCreating ? 'Create Brand' : 'Edit Brand'}</h3>
             <div class="input-set">
                 <div class="f-box">
-                    <label>NAME</label>
-                    <input bind:value={brandForm.name} placeholder="Acme Inc">
+                    <label for="brandName">NAME</label>
+                    <input id="brandName" bind:value={brandForm.name} placeholder="Acme Inc">
                 </div>
                 <div class="f-box">
-                    <label>INDUSTRY</label>
-                    <input bind:value={brandForm.industry} placeholder="Tech, Marketing...">
+                    <label for="brandIndustry">INDUSTRY</label>
+                    <input id="brandIndustry" bind:value={brandForm.industry} placeholder="Tech, Marketing...">
                 </div>
                 <div class="f-box">
-                    <label>DOMAIN</label>
-                    <input bind:value={brandForm.domain} placeholder="acme.com">
+                    <label for="brandDomain">DOMAIN</label>
+                    <input id="brandDomain" bind:value={brandForm.domain} placeholder="acme.com">
                 </div>
                 <div class="f-box">
-                    <label>DESCRIPTION (OPTIONAL)</label>
-                    <textarea bind:value={brandForm.description} placeholder="Brand purpose..." rows="3"></textarea>
+                    <label for="brandDesc">DESCRIPTION (OPTIONAL)</label>
+                    <textarea id="brandDesc" bind:value={brandForm.description} placeholder="Brand purpose..." rows="3"></textarea>
                 </div>
             </div>
             <div class="modal-foot">
@@ -214,12 +220,12 @@
             <h3>Edit Platform Profile</h3>
             <div class="input-set">
                 <div class="f-box">
-                    <label>FULL NAME</label>
-                    <input bind:value={userForm.fullName} placeholder="Jane Doe">
+                    <label for="userFullName">FULL NAME</label>
+                    <input id="userFullName" bind:value={userForm.fullName} placeholder="Jane Doe">
                 </div>
                 <div class="f-box">
-                    <label>EMAIL ADDRESS</label>
-                    <input bind:value={userForm.email} placeholder="jane@example.com" type="email">
+                    <label for="userEmail">EMAIL ADDRESS</label>
+                    <input id="userEmail" bind:value={userForm.email} placeholder="jane@example.com" type="email">
                 </div>
             </div>
             <div class="modal-foot">
@@ -240,8 +246,8 @@
             </p>
             <div class="input-set">
                 <div class="f-box">
-                    <label>SLACK MEMBER ID</label>
-                    <input bind:value={slackForm.slackId} placeholder="UXXXXXXX">
+                    <label for="slackId">SLACK MEMBER ID</label>
+                    <input id="slackId" bind:value={slackForm.slackId} placeholder="UXXXXXXX">
                 </div>
             </div>
             <div class="modal-foot">
