@@ -111,6 +111,10 @@ class UserUpdate(BaseModel):
     full_name: Optional[str] = None
     slack_user_id: Optional[str] = None
 
+class PasswordUpdate(BaseModel):
+    current_password: str
+    new_password: str
+
 class BrandBase(BaseModel):
     name: str
     domain: Optional[str] = None
@@ -297,6 +301,21 @@ async def get_user(user_id: UUID):
         raise HTTPException(status_code=404, detail="User not found")
     user.pop("password_hash", None)
     return user
+
+@app.patch("/users/me/password")
+async def change_password(body: PasswordUpdate, user_id: str = Depends(get_current_user)):
+    user = get_user_db(user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    if not verify_password(body.current_password, user["password_hash"]):
+        raise HTTPException(status_code=401, detail="Incorrect current password")
+    
+    hashed_password = get_password_hash(body.new_password)
+    if not update_user_db(user_id, {"password_hash": hashed_password}):
+        raise HTTPException(status_code=500, detail="Failed to update password")
+    
+    return {"message": "Password updated successfully"}
 
 @app.patch("/users/{user_id}")
 async def update_user(user_id: UUID, user_update: UserUpdate):

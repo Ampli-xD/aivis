@@ -13,6 +13,8 @@
     let userForm = $state({ fullName: '', email: '' });
     let slackForm = $state({ slackId: '' });
     let isEditingSlack = $state(false);
+    let isChangingPassword = $state(false);
+    let passwordForm = $state({ current: '', new: '', confirm: '' });
 
     function formatDate(dateStr: string) {
         if (!dateStr) return 'N/A';
@@ -93,6 +95,31 @@
         appState.activeBrandId = id;
         appState.toast(`Switched to ${appState.brands.find(b=>b.id===id)?.name}`);
     }
+
+    function startChangePassword() {
+        passwordForm = { current: '', new: '', confirm: '' };
+        isChangingPassword = true;
+    }
+
+    async function handlePasswordChange() {
+        if (!passwordForm.current || !passwordForm.new || !passwordForm.confirm) {
+            appState.toast('All fields are required');
+            return;
+        }
+        if (passwordForm.new !== passwordForm.confirm) {
+            appState.toast('New passwords do not match');
+            return;
+        }
+        if (passwordForm.new.length < 6) {
+            appState.toast('New password must be at least 6 characters');
+            return;
+        }
+
+        const success = await appState.changePassword(passwordForm.current, passwordForm.new);
+        if (success) {
+            isChangingPassword = false;
+        }
+    }
 </script>
 
 <div class="profile-layout">
@@ -117,6 +144,18 @@
             <div class="detail-row"><span class="label">User ID</span><span class="val mono">{user.id}</span></div>
             <div class="detail-row"><span class="label">Joined</span><span class="val">{formatDate(user.createdAt)}</span></div>
             <div class="detail-row" style="border-bottom:none"><span class="label">Rank</span><span class="val">Workspace Admin</span></div>
+        </div>
+
+        <!-- Security -->
+        <div class="card section-card">
+            <div class="section-tag">SECURITY</div>
+            <div class="password-row" style="display:flex;justify-content:space-between;align-items:center">
+                <div style="display:flex;align-items:center;gap:8px">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b6882" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                    <span style="font-size:12px;color:#a09cc0">Password</span>
+                </div>
+                <button class="connect-btn mini" onclick={startChangePassword} style="font-size: 9px; padding: 3px 8px; background: rgba(164, 126, 253, 0.1); color: var(--primary-p3); border: 1px solid rgba(164, 126, 253, 0.2)">Update</button>
+            </div>
         </div>
 
         <!-- Slack Integration -->
@@ -257,6 +296,34 @@
         </div>
     </div>
 {/if}
+
+<!-- Password Change Modal -->
+{#if isChangingPassword}
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <h3>Update Login Password</h3>
+            <div class="input-set">
+                <div class="f-box">
+                    <label for="currentPass">CURRENT PASSWORD</label>
+                    <input id="currentPass" type="password" bind:value={passwordForm.current} placeholder="••••••••">
+                </div>
+                <div class="f-box">
+                    <label for="newPass">NEW PASSWORD</label>
+                    <input id="newPass" type="password" bind:value={passwordForm.new} placeholder="••••••••">
+                </div>
+                <div class="f-box">
+                    <label for="confirmPass">CONFIRM NEW PASSWORD</label>
+                    <input id="confirmPass" type="password" bind:value={passwordForm.confirm} placeholder="••••••••">
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="cancel-btn" onclick={() => isChangingPassword = false}>Cancel</button>
+                <button class="save-btn" onclick={handlePasswordChange}>Update Password</button>
+            </div>
+        </div>
+    </div>
+{/if}
+
 
 <style>
     .profile-layout {

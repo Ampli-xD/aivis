@@ -254,6 +254,28 @@ class AppState {
         }
     }
 
+    async changePassword(currentPassword: string, newPassword: string) {
+        try {
+            const res = await this.fetchWithAuth(`${this.baseUrl}/users/me/password`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ current_password: currentPassword, new_password: newPassword })
+            });
+
+            if (!res.ok) {
+                const data = await res.json();
+                this.toast(data.detail || 'Incorrect current password');
+                return false;
+            }
+
+            this.toast('Password updated successfully');
+            return true;
+        } catch (e: any) {
+            this.toast(e.message);
+            return false;
+        }
+    }
+
     async signup(email: string, pass: string, fullName: string) {
         try {
             const res = await fetch(`${this.baseUrl}/users`, {
