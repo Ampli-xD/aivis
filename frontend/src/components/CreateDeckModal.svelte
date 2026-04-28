@@ -100,13 +100,13 @@
 
         <div class="modal-body scrollable">
             <div class="form-group">
-                <label>DECK NAME</label>
-                <input bind:value={name} placeholder="e.g., Daily Brand Health Check" class="modal-input">
+                <label for="deckNameCreate">DECK NAME</label>
+                <input id="deckNameCreate" bind:value={name} placeholder="e.g., Daily Brand Health Check" class="modal-input">
             </div>
 
             <div class="form-group">
-                <label>BRAND</label>
-                <div class="brand-display">{getBrandName(brandId)}</div>
+                <label for="deckBrandCreate">BRAND</label>
+                <div id="deckBrandCreate" class="brand-display">{getBrandName(brandId)}</div>
             </div>
 
             <div class="grid-2-col">
@@ -150,8 +150,8 @@
             </div>
 
             <div class="form-group">
-                <label>PROMPT SEQUENCES <span class="count-pill">{selectedPromptIds.length}</span></label>
-                <div class="multi-select-box lg-box">
+                <label for="promptSelectCreate">PROMPT SEQUENCES <span class="count-pill">{selectedPromptIds.length}</span></label>
+                <div id="promptSelectCreate" class="multi-select-box lg-box">
                     {#if filteredPrompts.length === 0}
                         <div class="empty-hint">No prompts found for this brand.</div>
                     {/if}
@@ -171,9 +171,9 @@
             </div>
 
             <div class="form-group">
-                <label>EXECUTION INTERVAL (SLOTS OF {appState.cronInterval} MIN)</label>
+                <label for="freqCreate">EXECUTION INTERVAL (SLOTS OF {appState.cronInterval} MIN)</label>
                 <div style="display:flex;align-items:center;gap:12px">
-                    <input type="number" bind:value={frequency} class="modal-input" style="width: 100px">
+                    <input id="freqCreate" type="number" bind:value={frequency} class="modal-input" style="width: 100px">
                     <div class="time-tip">
                         <span class="l">WAIT:</span>
                         <span class="v">{formatTime(totalMins)}</span>

@@ -125,7 +125,7 @@
 
 <!-- Create modal -->
 {#if showCreate}
-    <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
+    <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
     <div class="modal-overlay" onclick={(e) => { if (e.target === e.currentTarget) showCreate = false; }}>
         <div class="modal">
             <div class="modal-header">

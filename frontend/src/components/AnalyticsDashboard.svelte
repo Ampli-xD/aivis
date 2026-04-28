@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import { computePromptMetrics, getWeeklyBuckets } from '../lib/analytics_utils.ts';
-    import type { Instance, Model, Prompt } from '../types.ts';
+    import { computePromptMetrics, getWeeklyBuckets } from '../lib/analytics_utils';
+    import type { Instance, Model, Prompt } from '../types';
 
     interface Props {
         instances: Instance[];
