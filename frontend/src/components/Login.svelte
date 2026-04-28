@@ -2,8 +2,8 @@
     import { appState } from '../state.svelte';
     import Logo from './Logo.svelte';
     
-    let email = $state('dishant@company.com');
-    let pass = $state('password');
+    let email = $state('');
+    let pass = $state('');
     let fullName = $state('');
     let isSignUp = $state(false);
     let loading = $state(false);
@@ -63,7 +63,7 @@
         
         <div style="margin-bottom:12px">
             <div class="field-label">EMAIL</div>
-            <input bind:value={email} class="login-input" type="email" placeholder="dishant@company.com">
+            <input bind:value={email} class="login-input" type="email" placeholder="example@dopest.io">
         </div>
         
         <div style="margin-bottom:12px">
