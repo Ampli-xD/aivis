@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdminOS — Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: 'Sora', sans-serif;
+            background: #0a0a0f;
+            color: #e8e6f0;
+            margin: 0;
+            min-height: 100vh
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace
+        }
+
+        /* Login */
+        #login-screen {
+            position: fixed;
+            inset: 0;
+            background: #0a0a0f;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            padding: 1.5rem
+        }
+
+        .login-card {
+            background: #13121a;
+            border: 1px solid #2a2840;
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            width: 100%;
+            max-width: 380px
+        }
+
+        .login-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 2rem
+        }
+
+        .logo-mark {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #7c6ff7, #4f46e5);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .login-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #f0eeff
+        }
+
+        .login-sub {
+            font-size: 13px;
+            color: #6b6882;
+            margin-bottom: 1.75rem
+        }
+
+        .field-label {
+            font-size: 12px;
+            color: #8884a0;
+            margin-bottom: 5px;
+            font-weight: 500;
+            letter-spacing: .04em
+        }
+
+        .login-input {
+            width: 100%;
+            background: #1e1c2a;
+            border: 1px solid #2e2c42;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #e8e6f0;
+            font-family: 'Sora', sans-serif;
+            outline: none;
+            transition: border-color .15s
+        }
+
+        .login-input:focus {
+            border-color: #7c6ff7
+        }
+
+        .login-input::placeholder {
+            color: #3d3b52
+        }
+
+        .login-btn {
+            width: 100%;
+            background: #7c6ff7;
+            border: none;
+            border-radius: 8px;
+            padding: 11px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            font-family: 'Sora', sans-serif;
+            transition: background .15s;
+            margin-top: 1.25rem
+        }
+
+        .login-btn:hover {
+            background: #6d62e8
+        }
+
+        .login-err {
+            font-size: 12px;
+            color: #f87171;
+            margin-top: 8px;
+            display: none
+        }
+
+        /* App shell */
+        #app {
+            display: none;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden
+        }
+
+        /* Top bar */
+        .topbar {
+            background: #13121a;
+            border-bottom: 1px solid #1e1c2a;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.25rem;
+            height: 52px;
+            flex-shrink: 0
+        }
+
+        .topbar-time {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #6b6882;
+            min-width: 120px
+        }
+
+        .topbar-welcome {
+            font-size: 13px;
+            color: #a09cc0;
+            text-align: center;
+            flex: 1
+        }
+
+        .topbar-welcome span {
+            color: #e8e6f0;
+            font-weight: 500
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 120px;
+            justify-content: flex-end;
+            position: relative
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #7c6ff7, #4f46e5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #fff;
+            user-select: none;
+            border: 2px solid #2a2840;
+            transition: border-color .15s
+        }
+
+        .avatar:hover {
+            border-color: #7c6ff7
+        }
+
+        .dropdown {
+            position: absolute;
+            top: 42px;
+            right: 0;
+            background: #1a1826;
+            border: 1px solid #2a2840;
+            border-radius: 10px;
+            width: 180px;
+            z-index: 100;
+            overflow: hidden;
+            display: none
+        }
+
+        .dropdown.open {
+            display: block
+        }
+
+        .dropdown-head {
+            padding: 12px 14px;
+            border-bottom: 1px solid #1e1c2a
+        }
+
+        .dropdown-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #e8e6f0
+        }
+
+        .dropdown-email {
+            font-size: 11px;
+            color: #6b6882;
+            margin-top: 2px
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #a09cc0;
+            cursor: pointer;
+            transition: background .12s
+        }
+
+        .dropdown-item:hover {
+            background: #221f31;
+            color: #e8e6f0
+        }
+
+        .dropdown-item.danger {
+            color: #f87171
+        }
+
+        .dropdown-item.danger:hover {
+            background: #2a1a1a;
+            color: #f87171
+        }
+
+        /* Tab bar */
+        .tabbar-wrap {
+            background: #0f0e16;
+            border-bottom: 1px solid #1e1c2a;
+            display: flex;
+            align-items: stretch;
+            flex-shrink: 0
+        }
+
+        .tabbar {
+            display: flex;
+            align-items: stretch;
+            overflow-x: auto;
+            flex: 1;
+            scrollbar-width: none
+        }
+
+        .tabbar::-webkit-scrollbar {
+            display: none
+        }
+
+        .tab-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 14px;
+            font-size: 12px;
+            cursor: pointer;
+            white-space: nowrap;
+            border-right: 1px solid #1a1826;
+            min-height: 38px;
+            color: #6b6882;
+            background: #0f0e16;
+            transition: background .12s, color .12s;
+            flex-shrink: 0;
+            position: relative
+        }
+
+        .tab-item:hover {
+            background: #13121a;
+            color: #a09cc0
+        }
+
+        .tab-item.active {
+            background: #13121a;
+            color: #e8e6f0;
+            font-weight: 500
+        }
+
+        .tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #7c6ff7
+        }
+
+        .tab-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            flex-shrink: 0
+        }
+
+        .tab-dot.deck {
+            background: #10b981
+        }
+
+        .tab-dot.prompts {
+            background: #7c6ff7
+        }
+
+        .tab-dot.settings {
+            background: #6b6882
+        }
+
+        .tab-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #3d3b52;
+            font-size: 14px;
+            line-height: 1;
+            padding: 0 0 0 4px;
+            font-family: 'Sora', sans-serif
+        }
+
+        .tab-close:hover {
+            color: #e8e6f0
+        }
+
+        .tab-add {
+            border: none;
+            background: none;
+            cursor: pointer;
+            padding: 0 14px;
+            font-size: 20px;
+            color: #3d3b52;
+            min-height: 38px;
+            flex-shrink: 0
+        }
+
+        .tab-add:hover {
+            color: #7c6ff7;
+            background: #13121a
+        }
+
+        .tab-count {
+            font-size: 11px;
+            color: #3d3b52;
+            padding: 0 12px;
+            display: flex;
+            align-items: center;
+            border-left: 1px solid #1a1826;
+            font-family: 'JetBrains Mono', monospace;
+            flex-shrink: 0
+        }
+
+        /* Content */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            background: #0a0a0f;
+            scrollbar-width: thin;
+            scrollbar-color: #1e1c2a transparent
+        }
+
+        .panel {
+            display: none;
+            padding: 1.25rem
+        }
+
+        .panel.active {
+            display: block
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 1.25rem
+        }
+
+        .stat-card {
+            background: #13121a;
+            border: 1px solid #1e1c2a;
+            border-radius: 10px;
+            padding: .875rem
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #6b6882;
+            margin-bottom: 4px;
+            letter-spacing: .03em
+        }
+
+        .stat-val {
+            font-size: 20px;
+            font-weight: 600;
+            color: #e8e6f0
+        }
+
+        .stat-val.g {
+            color: #10b981
+        }
+
+        .stat-val.r {
+            color: #f87171
+        }
+
+        .stat-sub {
+            font-size: 11px;
+            color: #3d3b52;
+            margin-top: 2px
+        }
+
+        /* Toolbar */
+        .toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            gap: 8px;
+            flex-wrap: wrap
+        }
+
+        .sec-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: #e8e6f0
+        }
+
+        .filter-wrap {
+            display: flex;
+            gap: 4px
+        }
+
+        .fb {
+            font-size: 11px;
+            padding: 3px 11px;
+            border-radius: 20px;
+            border: 1px solid #2a2840;
+            background: none;
+            cursor: pointer;
+            color: #6b6882;
+            font-family: 'Sora', sans-serif;
+            transition: all .12s
+        }
+
+        .fb.on {
+            background: #1e1c2a;
+            color: #e8e6f0;
+            border-color: #4f46e5
+        }
+
+        .srch {
+            font-size: 12px;
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: 1px solid #2a2840;
+            background: #13121a;
+            color: #e8e6f0;
+            font-family: 'Sora', sans-serif;
+            width: 160px;
+            outline: none
+        }
+
+        .srch::placeholder {
+            color: #3d3b52
+        }
+
+        .srch:focus {
+            border-color: #4f46e5
+        }
+
+        .new-btn {
+            font-size: 12px;
+            padding: 6px 13px;
+            border-radius: 8px;
+            border: 1px solid #4f46e5;
+            background: #4f46e5;
+            cursor: pointer;
+            color: #fff;
+            font-family: 'Sora', sans-serif;
+            font-weight: 500;
+            transition: background .12s
+        }
+
+        .new-btn:hover {
+            background: #6d62e8
+        }
+
+        /* Cards */
+        .grid2 {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px
+        }
+
+        .card {
+            background: #13121a;
+            border: 1px solid #1e1c2a;
+            border-radius: 12px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: border-color .12s
+        }
+
+        .card:hover {
+            border-color: #2a2840
+        }
+
+        .card-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 8px
+        }
+
+        .card-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #e8e6f0
+        }
+
+        .card-id {
+            font-size: 11px;
+            color: #3d3b52;
+            margin-top: 2px;
+            font-family: 'JetBrains Mono', monospace
+        }
+
+        .pill {
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: 500
+        }
+
+        .pill.a {
+            background: #052e16;
+            color: #10b981;
+            border: 1px solid #064e20
+        }
+
+        .pill.i {
+            background: #2a1a1a;
+            color: #f87171;
+            border: 1px solid #3d1a1a
+        }
+
+        .divl {
+            height: 1px;
+            background: #1e1c2a;
+            margin: 8px 0
+        }
+
+        .mrow {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap
+        }
+
+        .mi {
+            font-size: 11px;
+            color: #6b6882
+        }
+
+        .ml {
+            color: #3d3b52
+        }
+
+        .card-foot {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 8px;
+            gap: 6px;
+            flex-wrap: wrap
+        }
+
+        .tags {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap
+        }
+
+        .tag {
+            font-size: 10px;
+            padding: 2px 7px;
+            border-radius: 20px;
+            background: #1a1826;
+            color: #6b6882;
+            border: 1px solid #2a2840
+        }
+
+        .ts {
+            font-size: 11px;
+            color: #3d3b52
+        }
+
+        .bar-bg {
+            height: 2px;
+            background: #1e1c2a;
+            border-radius: 2px;
+            margin-top: 8px
+        }
+
+        .bar {
+            height: 2px;
+            border-radius: 2px
+        }
+
+        .bar.g {
+            background: #10b981
+        }
+
+        .bar.r {
+            background: #f87171
+        }
+
+        /* Prompt rows */
+        .plist {
+            display: flex;
+            flex-direction: column;
+            gap: 8px
+        }
+
+        .pc {
+            background: #13121a;
+            border: 1px solid #1e1c2a;
+            border-radius: 12px;
+            padding: .875rem 1rem
+        }
+
+        .pc-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 5px
+        }
+
+        .pc-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #e8e6f0
+        }
+
+        .pc-id {
+            font-size: 10px;
+            color: #3d3b52;
+            font-family: 'JetBrains Mono', monospace
+        }
+
+        .prev {
+            font-size: 12px;
+            color: #6b6882;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 7px
+        }
+
+        .pc-foot {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 6px
+        }
+
+        .pmeta {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap
+        }
+
+        /* Home */
+        .home-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            gap: 2rem
+        }
+
+        .qgrid {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center
+        }
+
+        .qbtn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 1.5rem 2rem;
+            border: 1px solid #2a2840;
+            border-radius: 14px;
+            background: #13121a;
+            cursor: pointer;
+            font-family: 'Sora', sans-serif;
+            transition: border-color .12s, background .12s;
+            min-width: 130px
+        }
+
+        .qbtn:hover {
+            border-color: #4f46e5;
+            background: #1a1826
+        }
+
+        .qbtn-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px
+        }
+
+        .qbtn-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #e8e6f0
+        }
+
+        .qbtn-sub {
+            font-size: 11px;
+            color: #3d3b52
+        }
+
+        /* Quick menu */
+        #quick-menu {
+            position: absolute;
+            top: 38px;
+            right: 40px;
+            background: #1a1826;
+            border: 1px solid #2a2840;
+            border-radius: 12px;
+            z-index: 100;
+            min-width: 210px;
+            overflow: hidden
+        }
+
+        .qm-item {
+            padding: 9px 14px;
+            font-size: 12px;
+            cursor: pointer;
+            color: #a09cc0;
+            border-bottom: 1px solid #1e1c2a;
+            transition: background .1s
+        }
+
+        .qm-item:last-child {
+            border-bottom: none
+        }
+
+        .qm-item:hover {
+            background: #221f31;
+            color: #e8e6f0
+        }
+
+        .qm-section {
+            padding: 6px 14px 3px;
+            font-size: 10px;
+            color: #3d3b52;
+            letter-spacing: .06em;
+            font-weight: 500;
+            background: #13121a
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e1c2a;
+            border: 1px solid #2a2840;
+            color: #e8e6f0;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity .2s;
+            pointer-events: none;
+            z-index: 999;
+            white-space: nowrap
+        }
+
+        #toast.show {
+            opacity: 1
+        }
+
+        /* Toggle */
+        .toggle {
+            width: 30px;
+            height: 17px;
+            border-radius: 9px;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            transition: background .15s;
+            flex-shrink: 0
+        }
+
+        .toggle.on {
+            background: #4f46e5
+        }
+
+        .toggle.off {
+            background: #2a2840
+        }
+
+        .toggle span {
+            position: absolute;
+            top: 2px;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: #fff;
+            transition: left .15s;
+            pointer-events: none
+        }
+
+        .toggle.on span {
+            left: 15px
+        }
+
+        .toggle.off span {
+            left: 2px
+        }
+
+        /* Detail */
+        .meta-grid3 {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 1.25rem
+        }
+
+        .mb {
+            background: #13121a;
+            border: 1px solid #1e1c2a;
+            border-radius: 10px;
+            padding: .75rem
+        }
+
+        .mb-label {
+            font-size: 10px;
+            color: #3d3b52;
+            margin-bottom: 3px;
+            letter-spacing: .03em
+        }
+
+        .mb-val {
+            font-size: 14px;
+            font-weight: 500;
+            color: #e8e6f0
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- LOGIN -->
+    <div id="login-screen">
+        <div class="login-card">
+            <div class="login-logo">
+                <div class="logo-mark">
+                    <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                        <rect x="2" y="2" width="5" height="5" rx="1.5" fill="white" />
+                        <rect x="9" y="2" width="5" height="5" rx="1.5" fill="white" opacity=".6" />
+                        <rect x="2" y="9" width="5" height="5" rx="1.5" fill="white" opacity=".6" />
+                        <rect x="9" y="9" width="5" height="5" rx="1.5" fill="white" opacity=".3" />
+                    </svg>
+                </div>
+                <span style="font-size:14px;font-weight:600;color:#e8e6f0">AdminOS</span>
+            </div>
+            <div class="login-title">Welcome back</div>
+            <div class="login-sub">Sign in to your workspace</div>
+            <div style="margin-bottom:12px">
+                <div class="field-label">EMAIL</div>
+                <input id="login-email" class="login-input" type="email" placeholder="dishant@company.com"
+                    value="dishant@company.com">
+            </div>
+            <div>
+                <div class="field-label">PASSWORD</div>
+                <input id="login-pass" class="login-input" type="password" placeholder="••••••••" value="password">
+            </div>
+            <div class="login-err" id="login-err">Invalid email or password.</div>
+            <button class="login-btn" onclick="doLogin()">Sign in</button>
+            <div style="text-align:center;margin-top:14px;font-size:11px;color:#3d3b52">Demo: any email + any password
+            </div>
+        </div>
+    </div>
+
+    <!-- APP -->
+    <div id="app" style="display:none;flex-direction:column;height:100vh;overflow:hidden;position:relative">
+
+        <!-- Top bar -->
+        <div class="topbar">
+            <div class="topbar-time mono" id="clock">--:-- --</div>
+            <div class="topbar-welcome">Good morning, <span id="welcome-name">Dishant</span></div>
+            <div class="topbar-right">
+                <div class="avatar" id="avatar-btn" onclick="toggleDropdown()">D</div>
+                <div class="dropdown" id="profile-dropdown">
+                    <div class="dropdown-head">
+                        <div class="dropdown-name" id="dd-name">Dishant Sharma</div>
+                        <div class="dropdown-email" id="dd-email">dishant@company.com</div>
+                    </div>
+                    <div class="dropdown-item" onclick="openProfileTab()">
+                        <svg width="14" height="14" fill="none" viewBox="0 0 16 16">
+                            <circle cx="8" cy="5" r="3" stroke="#a09cc0" stroke-width="1.5" />
+                            <path d="M2 13c0-3 2.686-5 6-5s6 2 6 5" stroke="#a09cc0" stroke-width="1.5"
+                                stroke-linecap="round" />
+                        </svg>
+                        Profile
+                    </div>
+                    <div class="dropdown-item danger" onclick="doLogout()">
+                        <svg width="14" height="14" fill="none" viewBox="0 0 16 16">
+                            <path d="M6 3H3v10h3M10 5l3 3-3 3M13 8H6" stroke="#f87171" stroke-width="1.5"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        Logout
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab bar -->
+        <div class="tabbar-wrap" style="position:relative">
+            <div class="tabbar" id="tabbar"></div>
+            <button class="tab-add" onclick="toggleQuickMenu()" title="Open new tab">+</button>
+            <div class="tab-count" id="tab-count">1/10</div>
+            <div id="quick-menu" style="display:none"></div>
+        </div>
+
+        <!-- Content -->
+        <div class="content-area" id="content-area"></div>
+    </div>
+
+    <div id="toast"></div>
+
+    <script>
+        var user = { name: 'Dishant', fullName: 'Dishant Sharma', email: 'dishant@company.com', initials: 'D' };
+        var decks = [
+            { id: 'DCK-001', name: 'Onboarding flow', status: 'active', category: 'User exp.', prompts: 14, tags: ['onboarding', 'user'], created: 'Jan 12', used: '2h ago', usage: 87, desc: 'Main onboarding deck for new users joining the platform.' },
+            { id: 'DCK-002', name: 'Sales playbook', status: 'active', category: 'Sales', prompts: 22, tags: ['sales', 'crm'], created: 'Feb 3', used: '30m ago', usage: 94, desc: 'Scripts and templates for the sales team outreach campaigns.' },
+            { id: 'DCK-003', name: 'Support scripts', status: 'active', category: 'Support', prompts: 9, tags: ['support', 'chat'], created: 'Mar 1', used: '5h ago', usage: 61, desc: 'Live chat and ticket response scripts for support agents.' },
+            { id: 'DCK-007', name: 'Legacy Q&A bank', status: 'inactive', category: 'Archive', prompts: 31, tags: ['legacy', 'qa'], created: 'Aug 20', used: '45d ago', usage: 12, desc: 'Old Q&A prompts from the v1 product. Archived for reference.' }
+        ];
+        var allPrompts = [
+            { id: 'PRO-041', name: 'Welcome message', deckId: 'DCK-001', deck: 'Onboarding flow', status: 'active', preview: '"Welcome to the platform! Let\'s get you set up in under 5 minutes. First, tell us about your role…"', uses: 1240, rating: 4.8, tokens: 118, tags: ['greeting', 'first-run'] },
+            { id: 'PRO-088', name: 'Cold outreach template', deckId: 'DCK-002', deck: 'Sales playbook', status: 'active', preview: '"Hi [Name], I noticed your team recently expanded — congrats! We help companies like yours streamline…"', uses: 892, rating: 4.5, tokens: 204, tags: ['email', 'b2b'] },
+            { id: 'PRO-059', name: 'Escalation handler', deckId: 'DCK-003', deck: 'Support scripts', status: 'active', preview: '"I completely understand your frustration, and I want to personally make sure this gets resolved today…"', uses: 317, rating: 4.7, tokens: 175, tags: ['escalation', 'urgent'] },
+            { id: 'PRO-012', name: 'Old FAQ response v1', deckId: 'DCK-007', deck: 'Legacy Q&A bank', status: 'inactive', preview: '"Thank you for reaching out. This feature was available in our previous product version…"', uses: 44, rating: 2.1, tokens: 310, tags: ['legacy', 'deprecated'] },
+            { id: 'PRO-099', name: 'Follow-up nudge', deckId: 'DCK-002', deck: 'Sales playbook', status: 'active', preview: '"Just circling back — happy to jump on a quick call to walk you through the demo…"', uses: 580, rating: 4.3, tokens: 142, tags: ['follow-up', 'email'] },
+            { id: 'PRO-103', name: 'Step 1: Role setup', deckId: 'DCK-001', deck: 'Onboarding flow', status: 'active', preview: '"Great! What best describes your role? This helps us personalise your experience from day one…"', uses: 980, rating: 4.6, tokens: 95, tags: ['onboarding', 'setup'] }
+        ];
+        var openTabs = [{ id: 'home', type: 'pinned', label: 'Home' }];
+        var activeTab = 'home';
+
+        function doLogin() {
+            var email = document.getElementById('login-email').value.trim();
+            var pass = document.getElementById('login-pass').value;
+            if (!email || !pass) { document.getElementById('login-err').style.display = 'block'; return; }
+            var n = email.split('@')[0];
+            n = n.charAt(0).toUpperCase() + n.slice(1);
+            user.name = n; user.email = email;
+            user.initials = n.charAt(0).toUpperCase();
+            document.getElementById('welcome-name').textContent = user.name;
+            document.getElementById('dd-name').textContent = user.fullName || user.name;
+            document.getElementById('dd-email').textContent = user.email;
+            document.getElementById('avatar-btn').textContent = user.initials;
+            document.getElementById('login-screen').style.display = 'none';
+            var app = document.getElementById('app');
+            app.style.display = 'flex';
+            initApp();
+        }
+        function doLogout() {
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('app').style.display = 'none';
+            document.getElementById('profile-dropdown').classList.remove('open');
+            openTabs = [{ id: 'home', type: 'pinned', label: 'Home' }];
+            activeTab = 'home';
+            document.getElementById('content-area').innerHTML = '';
+        }
+        function toggleDropdown() {
+            document.getElementById('profile-dropdown').classList.toggle('open');
+        }
+        document.addEventListener('click', function (e) {
+            var dd = document.getElementById('profile-dropdown');
+            var btn = document.getElementById('avatar-btn');
+            if (dd && btn && !dd.contains(e.target) && !btn.contains(e.target)) dd.classList.remove('open');
+        });
+
+        function getGreeting() {
+            var h = new Date().getHours();
+            if (h < 12) return 'Good morning,';
+            if (h < 17) return 'Good afternoon,';
+            return 'Good evening,';
+        }
+        function updateClock() {
+            var now = new Date();
+            var h = now.getHours(), m = now.getMinutes();
+            var ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12 || 12;
+            document.getElementById('clock').textContent = (h < 10 ? '0' + h : h) + ':' + (m < 10 ? '0' + m : m) + ' ' + ampm;
+            document.querySelector('.topbar-welcome').innerHTML = getGreeting() + ' <span id="welcome-name" style="color:#e8e6f0;font-weight:500">' + user.name + '</span>';
+        }
+
+        function toast(msg) { var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200) }
+
+        function renderTabBar() {
+            var bar = document.getElementById('tabbar');
+            bar.innerHTML = '';
+            openTabs.forEach(function (t) {
+                var el = document.createElement('div');
+                el.className = 'tab-item' + (t.id === activeTab ? ' active' : '');
+                el.onclick = function () { switchTab(t.id) };
+                if (t.type === 'pinned') {
+                    el.innerHTML = '<svg width="12" height="12" fill="none" viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5" rx="1" fill="currentColor" opacity=".7"/><rect x="9" y="2" width="5" height="5" rx="1" fill="currentColor" opacity=".7"/><rect x="2" y="9" width="5" height="5" rx="1" fill="currentColor" opacity=".7"/><rect x="9" y="9" width="5" height="5" rx="1" fill="currentColor" opacity=".4"/></svg><span>Home</span>';
+                } else {
+                    var dotClass = 'deck';
+                    if (t.type === 'prompts') dotClass = 'prompts';
+                    else if (t.type === 'settings' || t.type === 'profile') dotClass = 'settings';
+                    el.innerHTML = '<span class="tab-dot ' + dotClass + '"></span><span>' + t.label + '</span><button class="tab-close" onclick="closeTab(event,\'' + t.id + '\')">×</button>';
+                }
+                bar.appendChild(el);
+            });
+            document.getElementById('tab-count').textContent = openTabs.length + '/10';
+        }
+
+        function switchTab(id) {
+            activeTab = id;
+            renderTabBar();
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            var panel = document.getElementById('panel-' + id);
+            if (panel) panel.classList.add('active');
+            var bar = document.getElementById('tabbar');
+            var el = bar.querySelector('.tab-item.active');
+            if (el) el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        }
+        function closeTab(e, id) {
+            e.stopPropagation();
+            openTabs = openTabs.filter(t => t.id !== id);
+            var p = document.getElementById('panel-' + id);
+            if (p) p.remove();
+            if (activeTab === id) activeTab = openTabs[openTabs.length - 1].id;
+            renderTabBar();
+            switchTab(activeTab);
+        }
+        function openTab(id, type, label, html) {
+            if (openTabs.find(t => t.id === id)) { switchTab(id); return; }
+            if (openTabs.length >= 10) { toast('Tab limit reached — scroll to see all open tabs'); document.getElementById('tabbar').scrollLeft = 9999; return; }
+            openTabs.push({ id, type, label });
+            var panel = document.createElement('div');
+            panel.id = 'panel-' + id; panel.className = 'panel';
+            panel.innerHTML = html;
+            document.getElementById('content-area').appendChild(panel);
+            switchTab(id);
+        }
+
+        function deckCard(d) {
+            return '<div class="card" data-status="' + d.status + '" onclick="openDeckDetail(\'' + d.id + '\')">'
+                + '<div class="card-top"><div><div class="card-name">' + d.name + '</div><div class="card-id">' + d.id + '</div></div>'
+                + '<span class="pill ' + (d.status === 'active' ? 'a' : 'i') + '">' + d.status + '</span></div>'
+                + '<div class="divl"></div>'
+                + '<div class="mrow"><span class="mi"><span class="ml">Prompts </span>' + d.prompts + '</span>'
+                + '<span class="mi"><span class="ml">Cat. </span>' + d.category + '</span>'
+                + '<span class="mi"><span class="ml">Created </span>' + d.created + '</span></div>'
+                + '<div class="card-foot"><div class="tags">' + d.tags.map(t => '<span class="tag">' + t + '</span>').join('') + '</div>'
+                + '<span class="ts">' + d.used + '</span></div>'
+                + '<div class="bar-bg"><div class="bar ' + (d.status === 'active' ? 'g' : 'r') + '" style="width:' + d.usage + '%"></div></div>'
+                + '</div>';
+        }
+        function promptRow(p) {
+            return '<div class="pc" data-status="' + p.status + '">'
+                + '<div class="pc-top"><div><div class="pc-name">' + p.name + '</div><div class="pc-id">' + p.id + ' · ' + p.deck + '</div></div>'
+                + '<span class="pill ' + (p.status === 'active' ? 'a' : 'i') + '">' + p.status + '</span></div>'
+                + '<div class="prev">' + p.preview + '</div>'
+                + '<div class="pc-foot"><div class="pmeta">'
+                + '<span class="mi"><span class="ml">Uses </span>' + p.uses.toLocaleString() + '</span>'
+                + '<span class="mi"><span class="ml">Rating </span>' + p.rating + '</span>'
+                + '<span class="mi"><span class="ml">Tokens </span>' + p.tokens + '</span></div>'
+                + '<div class="tags">' + p.tags.map(t => '<span class="tag">' + t + '</span>').join('') + '</div></div>'
+                + '</div>';
+        }
+
+        function openDecksTab() {
+            var active = decks.filter(d => d.status === 'active').length;
+            openTab('decks', 'deck', 'Decks',
+                '<div class="stats-grid">'
+                + '<div class="stat-card"><div class="stat-label">TOTAL DECKS</div><div class="stat-val">' + decks.length + '</div></div>'
+                + '<div class="stat-card"><div class="stat-label">ACTIVE</div><div class="stat-val g">' + active + '</div></div>'
+                + '<div class="stat-card"><div class="stat-label">INACTIVE</div><div class="stat-val r">' + (decks.length - active) + '</div></div>'
+                + '<div class="stat-card"><div class="stat-label">AVG PROMPTS</div><div class="stat-val">19</div></div>'
+                + '</div>'
+                + '<div class="toolbar">'
+                + '<div style="display:flex;align-items:center;gap:8px"><span class="sec-title">All decks</span>'
+                + '<div class="filter-wrap">'
+                + '<button class="fb on" onclick="deckF(\'all\',this)">All</button>'
+                + '<button class="fb" onclick="deckF(\'active\',this)">Active</button>'
+                + '<button class="fb" onclick="deckF(\'inactive\',this)">Inactive</button>'
+                + '</div></div>'
+                + '<div style="display:flex;gap:6px"><input class="srch" placeholder="Search decks…" oninput="searchD(this.value)">'
+                + '<button class="new-btn">+ New deck</button></div>'
+                + '</div>'
+                + '<div class="grid2" id="deck-grid">' + decks.map(deckCard).join('') + '</div>'
+            );
+        }
+        function deckF(s, btn) { btn.closest('.filter-wrap').querySelectorAll('.fb').forEach(b => b.classList.remove('on')); btn.classList.add('on'); document.querySelectorAll('#deck-grid .card').forEach(c => { c.style.display = (s === 'all' || c.dataset.status === s) ? '' : 'none' }) }
+        function searchD(q) { document.querySelectorAll('#deck-grid .card').forEach(c => { c.style.display = c.querySelector('.card-name').textContent.toLowerCase().includes(q.toLowerCase()) ? '' : 'none' }) }
+
+        function openDeckDetail(id) {
+            var d = decks.find(x => x.id === id);
+            if (!d) return;
+            var dp = allPrompts.filter(p => p.deckId === id);
+            openTab('deck-' + id, 'deck', d.name,
+                '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:10px">'
+                + '<div><div style="font-size:17px;font-weight:600;color:#e8e6f0">' + d.name + '</div>'
+                + '<div style="font-size:11px;color:#3d3b52;margin-top:3px;font-family:JetBrains Mono,monospace">' + d.id + ' · ' + d.category + '</div></div>'
+                + '<div style="display:flex;gap:8px;align-items:center">'
+                + '<span class="pill ' + (d.status === 'active' ? 'a' : 'i') + '">' + d.status + '</span>'
+                + '<button class="new-btn" style="font-size:11px;padding:4px 10px">Edit</button>'
+                + '<button class="new-btn" style="font-size:11px;padding:4px 10px;background:#2a1a1a;border-color:#f87171;color:#f87171">Delete</button>'
+                + '</div></div>'
+                + '<div class="meta-grid3">'
+                + '<div class="mb"><div class="mb-label">PROMPTS</div><div class="mb-val">' + d.prompts + '</div></div>'
+                + '<div class="mb"><div class="mb-label">CREATED</div><div class="mb-val">' + d.created + '</div></div>'
+                + '<div class="mb"><div class="mb-label">LAST USED</div><div class="mb-val">' + d.used + '</div></div>'
+                + '</div>'
+                + '<div style="font-size:12px;color:#6b6882;margin-bottom:1.25rem;line-height:1.7">' + d.desc + '</div>'
+                + '<div class="divl" style="margin-bottom:1rem"></div>'
+                + '<div class="sec-title" style="margin-bottom:10px">Prompts in this deck</div>'
+                + '<div class="plist">' + (dp.length ? dp.map(promptRow).join('') : '<div style="text-align:center;padding:2rem;color:#3d3b52;font-size:13px">No prompts yet.</div>') + '</div>'
+            );
+        }
+
+        function openPromptsTab() {
+            var active = allPrompts.filter(p => p.status === 'active').length;
+            openTab('all-prompts', 'prompts', 'All prompts',
+                '<div class="stats-grid">'
+                + '<div class="stat-card"><div class="stat-label">TOTAL PROMPTS</div><div class="stat-val">' + allPrompts.length + '</div></div>'
+                + '<div class="stat-card"><div class="stat-label">ACTIVE</div><div class="stat-val g">' + active + '</div></div>'
+                + '<div class="stat-card"><div class="stat-label">INACTIVE</div><div class="stat-val r">' + (allPrompts.length - active) + '</div></div>'
+                + '<div class="stat-card"><div class="stat-label">AVG USES</div><div class="stat-val">676</div></div>'
+                + '</div>'
+                + '<div class="toolbar">'
+                + '<div style="display:flex;align-items:center;gap:8px"><span class="sec-title">All prompts</span>'
+                + '<div class="filter-wrap">'
+                + '<button class="fb on" onclick="promptF(\'all\',this)">All</button>'
+                + '<button class="fb" onclick="promptF(\'active\',this)">Active</button>'
+                + '<button class="fb" onclick="promptF(\'inactive\',this)">Inactive</button>'
+                + '</div></div>'
+                + '<input class="srch" placeholder="Search prompts…" oninput="searchP(this.value)">'
+                + '</div>'
+                + '<div class="plist" id="prompt-list">' + allPrompts.map(promptRow).join('') + '</div>'
+            );
+        }
+        function promptF(s, btn) { btn.closest('.filter-wrap').querySelectorAll('.fb').forEach(b => b.classList.remove('on')); btn.classList.add('on'); document.querySelectorAll('#prompt-list .pc').forEach(c => { c.style.display = (s === 'all' || c.dataset.status === s) ? '' : 'none' }) }
+        function searchP(q) { document.querySelectorAll('#prompt-list .pc').forEach(c => { c.style.display = c.querySelector('.pc-name').textContent.toLowerCase().includes(q.toLowerCase()) ? '' : 'none' }) }
+
+        function openSettingsTab() {
+            function tog(label, on) {
+                return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #1a1826">'
+                    + '<span style="font-size:12px;color:#a09cc0">' + label + '</span>'
+                    + '<div class="toggle ' + (on ? 'on' : 'off') + '" onclick="this.classList.toggle(\'on\');this.classList.toggle(\'off\')"><span></span></div></div>';
+            }
+            openTab('settings', 'settings', 'Settings',
+                '<div class="stats-grid">'
+                + '<div class="stat-card"><div class="stat-label">DECK LIMIT</div><div class="stat-val">50</div></div>'
+                + '<div class="stat-card"><div class="stat-label">PROMPT LIMIT</div><div class="stat-val">500</div></div>'
+                + '<div class="stat-card"><div class="stat-label">ACTIVE USERS</div><div class="stat-val">12</div></div>'
+                + '<div class="stat-card"><div class="stat-label">API CALLS</div><div class="stat-val">4.2k</div><div class="stat-sub">last 30 days</div></div>'
+                + '</div>'
+                + '<div class="card" style="cursor:default;margin-bottom:10px">'
+                + '<div style="font-size:10px;color:#3d3b52;margin-bottom:10px;letter-spacing:.06em;font-weight:500">DISPLAY</div>'
+                + tog('Show inactive items', true) + tog('Auto-archive after inactivity', false) + tog('Grid view by default', true)
+                + '</div>'
+                + '<div class="card" style="cursor:default;margin-bottom:10px">'
+                + '<div style="font-size:10px;color:#3d3b52;margin-bottom:10px;letter-spacing:.06em;font-weight:500">NOTIFICATIONS</div>'
+                + tog('Email on new deck', true) + tog('Alert on low usage prompts', false) + tog('Weekly digest', true)
+                + '</div>'
+                + '<div class="card" style="cursor:default">'
+                + '<div style="font-size:10px;color:#3d3b52;margin-bottom:10px;letter-spacing:.06em;font-weight:500">DANGER ZONE</div>'
+                + '<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #1a1826">'
+                + '<span style="font-size:12px;color:#a09cc0">Export all data</span>'
+                + '<button class="new-btn" style="font-size:11px;padding:4px 10px;background:none;border-color:#2a2840;color:#a09cc0">Export CSV</button></div>'
+                + '<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0">'
+                + '<span style="font-size:12px;color:#a09cc0">Clear inactive items</span>'
+                + '<button class="new-btn" style="font-size:11px;padding:4px 10px;background:#2a1a1a;border-color:#f87171;color:#f87171">Clear inactive</button></div>'
+                + '</div>'
+            );
+        }
+
+        function openProfileTab() {
+            document.getElementById('profile-dropdown').classList.remove('open');
+            openTab('profile', 'profile', 'Profile',
+                '<div style="max-width:400px">'
+                + '<div style="display:flex;align-items:center;gap:16px;margin-bottom:1.5rem">'
+                + '<div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#7c6ff7,#4f46e5);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;color:#fff">' + user.initials + '</div>'
+                + '<div><div style="font-size:16px;font-weight:600;color:#e8e6f0">' + user.fullName + '</div>'
+                + '<div style="font-size:12px;color:#6b6882;margin-top:2px">' + user.email + '</div></div>'
+                + '</div>'
+                + '<div class="card" style="cursor:default;margin-bottom:10px">'
+                + '<div style="font-size:10px;color:#3d3b52;margin-bottom:10px;letter-spacing:.06em;font-weight:500">ACCOUNT DETAILS</div>'
+                + '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1a1826"><span style="font-size:12px;color:#6b6882">Role</span><span style="font-size:12px;color:#e8e6f0">Admin</span></div>'
+                + '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1a1826"><span style="font-size:12px;color:#6b6882">Workspace</span><span style="font-size:12px;color:#e8e6f0">company.com</span></div>'
+                + '<div style="display:flex;justify-content:space-between;padding:6px 0"><span style="font-size:12px;color:#6b6882">Member since</span><span style="font-size:12px;color:#e8e6f0">Jan 2024</span></div>'
+                + '</div>'
+                + '<button class="new-btn" style="width:100%">Edit profile</button>'
+                + '</div>'
+            );
+        }
+
+        function toggleQuickMenu() {
+            var m = document.getElementById('quick-menu');
+            if (m.style.display === 'block') { m.style.display = 'none'; return; }
+            m.innerHTML =
+                '<div class="qm-section">OPEN</div>'
+                + '<div class="qm-item" onclick="openDecksTab();closeQM()">Decks</div>'
+                + '<div class="qm-item" onclick="openPromptsTab();closeQM()">All prompts</div>'
+                + '<div class="qm-item" onclick="openSettingsTab();closeQM()">Settings</div>'
+                + '<div class="qm-section" style="margin-top:2px">DECK DETAIL</div>'
+                + decks.map(d => '<div class="qm-item" onclick="openDeckDetail(\'' + d.id + '\');closeQM()">' + d.name + '</div>').join('');
+            m.style.display = 'block';
+            setTimeout(() => document.addEventListener('click', function h(e) { if (!m.contains(e.target)) { m.style.display = 'none'; document.removeEventListener('click', h) } }), 50);
+        }
+        function closeQM() { document.getElementById('quick-menu').style.display = 'none' }
+
+        function initApp() {
+            var ca = document.getElementById('content-area');
+            ca.innerHTML = '';
+            openTabs = [{ id: 'home', type: 'pinned', label: 'Home' }];
+            activeTab = 'home';
+            var homePanel = document.createElement('div');
+            homePanel.id = 'panel-home'; homePanel.className = 'panel active';
+            homePanel.innerHTML =
+                '<div class="home-wrap">'
+                + '<div style="text-align:center">'
+                + '<div style="font-size:15px;font-weight:500;color:#e8e6f0;margin-bottom:6px">What would you like to open?</div>'
+                + '<div style="font-size:12px;color:#3d3b52">Click + in the tab bar or choose below</div>'
+                + '</div>'
+                + '<div class="qgrid">'
+                + '<button class="qbtn" onclick="openDecksTab()"><div class="qbtn-icon" style="background:#052e16">📋</div><div class="qbtn-label">Decks</div><div class="qbtn-sub">' + decks.length + ' total</div></button>'
+                + '<button class="qbtn" onclick="openPromptsTab()"><div class="qbtn-icon" style="background:#1e1040">💬</div><div class="qbtn-label">All prompts</div><div class="qbtn-sub">' + allPrompts.length + ' total</div></button>'
+                + '<button class="qbtn" onclick="openSettingsTab()"><div class="qbtn-icon" style="background:#1a1826">⚙</div><div class="qbtn-label">Settings</div><div class="qbtn-sub">Workspace</div></button>'
+                + '</div>'
+                + '</div>';
+            ca.appendChild(homePanel);
+            renderTabBar();
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+    </script>
+</body>
+
+</html>
