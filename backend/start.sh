@@ -17,12 +17,14 @@ if [ ! -s "$PG_CONF" ]; then
     echo "Initializing database for the first time..."
     mkdir -p "$DATA_DIR"
     chown -R postgres:postgres "$DATA_DIR"
+    chmod 700 "$DATA_DIR"
     su postgres -c "/usr/lib/postgresql/15/bin/initdb -D $DATA_DIR"
     echo "host all all 127.0.0.1/32 trust" >> "$DATA_DIR/pg_hba.conf"
 fi
 
-# Always fix permissions for the data dir
+# Always fix permissions for the data dir (Postgres is very strict: must be 0700)
 chown -R postgres:postgres "$DATA_DIR"
+chmod 700 "$DATA_DIR"
 
 # 3. Cleanup stale pid file
 if [ -f "$DATA_DIR/postmaster.pid" ]; then
